@@ -1,37 +1,128 @@
 .app-container {
-    width: 90em;
-    min-width: 90em;
-    min-height: 55em;
+    width: 100vw;
+    height: 100vh;
     background: var(--primary-color);
     color: var(--secondary-color);
     display: grid;
-    grid-template-columns: 25% auto;
-    margin: 2em;
+    grid-template-columns: 20% auto;
     border-radius: 0.2em;
     border: 1px solid var(--primary-color);
     box-shadow: 5px 5px rgba(0,0,0,0.17);
+    /*font-family: sans-serif;*/
 }
 
 .nav-bar {
     display: grid;
-    background: var(--accent-color);
-    grid-template-rows: 8% auto 8%;
+    background: var(--primary-color);
+    background-image: url("/assets/images/trippy4-3.png");
+    background-size: cover;
+    grid-template-rows: 15% auto 8%;
+    border-right: 2px solid var(--accent-color);
+    padding: 1em;
+    padding-bottom: 0em;
+    max-height: 100vh;
+    font-size: 0.8em;
 }
 
 .nav-logo {
     grid-row: 1 / span 1;
     font-family: Roadam;
     font-size: 2em;
-    padding: 2em;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.nav-logo h1 {
+    animation: shake 0.3s ease-in-out infinite;
 }
 
 .nav-body {
     grid-row: 2 / span 1;
+    padding: 1em 0em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    border-bottom: 1px solid var(--accent-color);
+    overflow: hidden;
 }
 
-.nav-footer {
+.nav-body .nav-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-body > *:not(:last-child) {
+  border-bottom: 1px solid var(--accent-color);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: gray;
+    padding: 1em 0em;
+}
+
+.divider img {
+    width: 0.7em;
+    height: 0.7em;
+}
+
+#nav-communities-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 50%;
+}
+
+#nav-communities-container .content {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+#nav-messages-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 50%;
+}
+
+#nav-messages-container .content {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+#nav-footer {
     grid-row: 3 / span 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    align-items: center;
+}
+
+.user .profile-icon {
+    width: 2em;
+    height: 2em;
+    background: white;
+    border-radius: 50%;
+}
+
+#nav-footer .settings-icon {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+#nav-footer .settings-icon:hover {
+    transform: rotate(10deg);
 }
