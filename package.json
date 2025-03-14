@@ -1,0 +1,23 @@
+{
+  "name": "torg",
+  "version": "1.0.0",
+  "description": "torg is an online bartering platform designed to provide an alternative to capitalism by enabling direct, cashless exchanges of goods and services. it empowers users to trade freely, fostering a community-driven economy based on mutual benefit rather than monetary transactions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oalmatov/torg.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oalmatov/torg/issues"
+  },
+  "homepage": "https://github.com/oalmatov/torg#readme",
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}
