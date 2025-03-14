@@ -1,7 +1,7 @@
 .app-container {
     width: 90em;
     min-width: 90em;
-    min-height: 60em;
+    min-height: 55em;
     background: var(--primary-color);
     color: var(--secondary-color);
     display: grid;
