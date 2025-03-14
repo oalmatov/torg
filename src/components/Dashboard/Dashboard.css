@@ -15,11 +15,8 @@
 .nav-bar {
     display: grid;
     background: var(--primary-color);
-    background-image: url("../../assets/images/trippy4-3.png");
-    background-size: cover;
     grid-template-rows: 15% auto 8%;
     border-right: 2px solid var(--accent-color);
-    padding: 1em;
     padding-bottom: 0em;
     max-height: 100vh;
     font-size: 0.8em;
@@ -27,6 +24,7 @@
 
 .nav-logo {
     grid-row: 1 / span 1;
+    background-image: url("../../assets/images/trippy4-3.png");
     font-family: Roadam;
     font-size: 2em;
     display: flex;
@@ -41,7 +39,7 @@
 
 .nav-body {
     grid-row: 2 / span 1;
-    padding: 1em 0em;
+    padding: 1em 2em;
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -54,9 +52,6 @@
     flex-direction: column;
 }
 
-.nav-body > *:not(:last-child) {
-  border-bottom: 1px solid var(--accent-color);
-}
 
 .divider {
     display: flex;
@@ -64,6 +59,7 @@
     justify-content: space-between;
     color: gray;
     padding: 1em 0em;
+    border-bottom: 1px solid var(--accent-color);
 }
 
 .divider img {
@@ -98,6 +94,7 @@
 #nav-footer {
     grid-row: 3 / span 1;
     display: flex;
+    padding: 2em;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
