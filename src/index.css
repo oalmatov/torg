@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: Roadam;
-    src: url('/assets/fonts/roadam/Roadam.otf');
+    src: url('./assets/fonts/roadam/Roadam.otf');
 }
 
 @keyframes shake {
@@ -23,7 +23,7 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background-image: url("/assets/images/graphy-dark.png");
+    background-image: url("./assets/images/graphy-dark.png");
     background-repeat: repeat;
     background-attachment: fixed;
     background-color: black;
