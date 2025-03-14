@@ -1,0 +1,31 @@
+.app-container {
+    width: 90em;
+    min-width: 90em;
+    min-height: 60em;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    display: grid;
+    grid-template-columns: 25% auto;
+    margin: 2em;
+    border-radius: 0.2em;
+    border: 1px solid var(--primary-color);
+    box-shadow: 5px 5px rgba(0,0,0,0.17);
+}
+
+.nav-bar {
+    display: grid;
+    background: var(--accent-color);
+    grid-template-rows: 8% auto 8%;
+}
+
+.nav-logo {
+    grid-row: 1 / span 1;
+}
+
+.nav-body {
+    grid-row: 2 / span 1;
+}
+
+.nav-footer {
+    grid-row: 3 / span 1;
+}
