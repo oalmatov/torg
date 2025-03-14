@@ -43,7 +43,7 @@ body {
 }
 
 
-.torg {
+.torg-container {
     min-width: 50%;
     height: 100%;
     font-family: Roadam;
@@ -53,7 +53,7 @@ body {
     align-items: center;
 }
 
-.torg h1 {
+.torg-container h1 {
     animation: shake 0.3s ease-in-out infinite;
 }
 
