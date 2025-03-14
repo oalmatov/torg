@@ -5,6 +5,54 @@
         <link rel="stylesheet" href="/styles.css">
     </head>
     <body>
-        <h1>hello world!</h1>
+        <section class="container">
+            <div class="torg">
+                <h1>torg</h1>
+            </div>
+            <div class="auth-container">
+                <form id="login-form" class="auth-form">
+                    <h1>login</h1>
+                    <label>Email</label>
+                    <input type="email" placeholder="torgin.terry@example.com" required/>
+                    <div class="pw-label">
+                        <label>Password</label>
+                        <a class="toggle-forgot" href="#">Forgot your password?</a>
+                    </div>
+                    <input type="password" required/>
+                    <button type="submit">Log in</button>
+                    <div class="sign-up-link">
+                        <p>Don't have an account? <a class="toggle-signup" href="#">Sign up!</a></p>
+                    </div>
+                </form>
+                <form id="signup-form" class="auth-form hidden">
+                    <h1>sign up</h1>
+                    <label>Email</label>
+                    <input type="email" placeholder="torgin.terry@example.com" required/>
+                    <label>Password</label>
+                    <input type="password" required/>
+                    <label>Confirm password</label>
+                    <input type="password" required/>
+                    <button type="submit">Sign up</button>
+                    <div class="sign-up-link">
+                        <p>Have an account? <a class="toggle-login" href="#">Log in!</a></p>
+                    </div>
+                </form>
+                <form id="forgot-form" class="auth-form hidden">
+                    <h1>Restore Password</h1>
+                    <label>Email</label>
+                    <input type="email" placeholder="torgin.terry@example.com" required/>
+                    <label>New password</label>
+                    <input type="password" required/>
+                    <label>Confirm new password</label>
+                    <input type="password" required/>
+                    <button type="submit">Restore password</button>
+                    <div class="sign-up-link">
+                        <p>Remembered your password? <a class="toggle-login" href="#">Log in!</a></p>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <script type="module" src="/js/login.js"></script>
     </body>
 </html
+
