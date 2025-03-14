@@ -1,3 +1,5 @@
+@import '../../index.css';
+
 .app-container {
     width: 100vw;
     height: 100vh;
@@ -8,13 +10,12 @@
     border-radius: 0.2em;
     border: 1px solid var(--primary-color);
     box-shadow: 5px 5px rgba(0,0,0,0.17);
-    /*font-family: sans-serif;*/
 }
 
 .nav-bar {
     display: grid;
     background: var(--primary-color);
-    background-image: url("/assets/images/trippy4-3.png");
+    background-image: url("../../assets/images/trippy4-3.png");
     background-size: cover;
     grid-template-rows: 15% auto 8%;
     border-right: 2px solid var(--accent-color);
