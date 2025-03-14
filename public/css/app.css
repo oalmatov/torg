@@ -20,6 +20,12 @@
 
 .nav-logo {
     grid-row: 1 / span 1;
+    font-family: Roadam;
+    font-size: 2em;
+    padding: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .nav-body {
