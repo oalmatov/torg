@@ -9,8 +9,8 @@ mutual benefit rather than monetary transactions.
 
 ```bash
 git clone git@github.com:oalmatov/torg.git
-cd torg/public
-npx serve .
+cd torg
+npm run dev
 ```
 
 ## stay in touch
