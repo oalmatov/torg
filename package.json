@@ -2,8 +2,11 @@
     "name": "torg",
     "version": "1.0.0",
     "description": "torg is an online bartering platform designed to provide an alternative to capitalism by enabling direct, cashless exchanges of goods and services. it empowers users to trade freely, fostering a community-driven economy based on mutual benefit rather than monetary transactions.",
+    "type": "module",
     "scripts": {
-        "dev": "npx tsc && npx serve public"
+        "dev": "npx tsc && npx serve public",
+        "lint": "npx eslint .",
+        "build": "npx tsc && npx webpack --mode production"
     },
     "repository": {
         "type": "git",
@@ -17,6 +20,13 @@
     },
     "homepage": "https://github.com/oalmatov/torg#readme",
     "devDependencies": {
-        "typescript": "^5.8.2"
+        "@eslint/js": "^9.22.0",
+        "eslint": "^9.22.0",
+        "globals": "^16.0.0",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.8.2",
+        "typescript-eslint": "^8.26.1",
+        "webpack": "^5.98.0",
+        "webpack-cli": "^6.0.1"
     }
 }
