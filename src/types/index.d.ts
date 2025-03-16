@@ -1,6 +1,6 @@
 export interface Chat {
     id: number;
-    user: User;
+    name: string;
     messages: string[]
 }
 

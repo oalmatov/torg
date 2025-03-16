@@ -17,8 +17,6 @@
     background: var(--primary-color);
     grid-template-rows: 15% auto 8%;
     border-right: 2px solid var(--accent-color);
-    padding-bottom: 0em;
-    max-height: 100vh;
     font-size: 0.8em;
 }
 
@@ -94,10 +92,14 @@
 #nav-footer {
     grid-row: 3 / span 1;
     display: flex;
-    padding: 2em;
+    padding: 0em 2em;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+
+#nav-footer:hover {
+    background: var(--accent-color);
 }
 
 .user {
@@ -123,4 +125,22 @@
 
 #nav-footer .settings-icon:hover {
     transform: rotate(10deg);
+}
+
+.community-tab {
+    cursor: pointer;
+    padding: 1em;
+    margin: 0;
+}
+
+.community-tab:hover {
+    background-color: var(--accent-color);
+}
+
+.community-tab .active {
+    background-color: var(--accent-color);
+}
+
+.view-container {
+    margin: 3em;
 }

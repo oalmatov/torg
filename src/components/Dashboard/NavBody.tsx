@@ -1,12 +1,11 @@
-import { User } from '../../types';
-import { useState } from 'react';
+import './Dashboard.css';
+import { useContext, useState } from 'react';
 import Chevron from '../../assets/icons/chevron-light.png';
+import { DashBoardContext } from './Dashboard';
 
-interface NavBodyProps {
-    user: User;
-}
-
-function NavBody({ user }: NavBodyProps) {
+function NavBody() {
+    const context = useContext(DashBoardContext);
+    const user = context.user;
     const [showMessages, setShowMessages] = useState<boolean>(true);
     const [showCommunities, setShowCommunities] = useState<boolean>(true);
 
@@ -27,8 +26,12 @@ function NavBody({ user }: NavBodyProps) {
                 </div>
                 { showCommunities && (
                     <div className="content">
-                        {user.communities.map((c) => {
-                            return <p>{c.name}</p>
+                        {user.communities.map((c, i) => {
+                            return <p key={i} className='community-tab' onClick={() => {
+                                if (context.setActiveTab) {
+                                    context.setActiveTab({type: 'community', data: c});
+                                }
+                            }} >{c.name}</p>
                         })}
                     </div>
                 )}
@@ -40,8 +43,12 @@ function NavBody({ user }: NavBodyProps) {
                 </div>
                 { showMessages && (
                     <div className="content">
-                        {user.chats.map((c) => {
-                            return <p>{c.user.name}</p>
+                        {user.chats.map((c, i) => {
+                            return <p key={i} className='community-tab' onClick={() => {
+                                if (context.setActiveTab) {
+                                    context.setActiveTab({type: 'chat', data: c});
+                                }
+                            }}>{c.name}</p>
                         })}
                     </div>
                 )}
