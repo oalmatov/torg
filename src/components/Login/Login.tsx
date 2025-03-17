@@ -8,6 +8,35 @@ function LoginPage(): ReactElement {
         setFormType(form);
     };
 
+    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const payload = {
+            email: formData.get("email"),
+            password: formData.get("password"),
+        };
+
+        try {
+            const response = await fetch("http://localhost:8080/login", {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            })
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log("Success:", data)
+        } catch(error) {
+            console.log("Error:", error);
+        } finally {
+            e.currentTarget.reset()
+        }
+
+    }
+
     return (
         <section className="login-container">
             <div className="torg-container">
@@ -15,7 +44,7 @@ function LoginPage(): ReactElement {
             </div>
             <div className="auth-container">
                 {formType === 'login' && (
-                    <form id="login-form" className="auth-form">
+                    <form id="login-form" className="auth-form" onSubmit={handleLoginSubmit}>
                         <h1>Login</h1>
                         <label>Email</label>
                         <input type="email" placeholder="torgin.terry@example.com" required />
