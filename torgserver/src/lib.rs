@@ -27,6 +27,21 @@ impl SignUpRequest {
     }
 } 
 
+#[derive(Serialize, Deserialize)]
+struct LoginRequest {
+    email: String,
+    password: String,
+}
+
+impl LoginRequest {
+    pub fn new(email: &str, password: &str) -> Self {
+        LoginRequest {
+            email: email.to_string(),
+            password: password.to_string(),
+        }
+    }
+}
+
 #[derive(Debug)]
 struct User {
     email: String,
@@ -53,14 +68,18 @@ impl UserStorage {
         }
     }
 
-    pub fn login(&self, email: String) -> Result<User, &'static str> {
+    pub fn login(&self, email: String, password: String) -> Result<User, &'static str> {
         let map = &self.users;
         if let Some(user) = map.get(&email) {
             let retuser = User {
                 email: user.email.clone(),
                 password: user.password.clone(),
             };
-            Ok(retuser)
+            if retuser.password == password {
+              Ok(retuser)
+            } else {
+                Err("The password is incorrect")
+            }
         } else {
             Err("No account under that email exists")
         }
@@ -83,6 +102,21 @@ pub async fn signup(req: web::Json<SignUpRequest>, data: web::Data<UsersLock>) -
         "message" : "User registered successfully!",
         "email" :  req.email
     }))
+}
+
+//need to validate login and give session token back to client
+#[post("/login")]
+pub async fn login(req: web::Json<LoginRequest>, data: web::Data::<UsersLock>) -> impl Responder {
+    if req.email.is_empty() || req.password.is_empty() {
+        return HttpResponse::BadRequest().body("All fields must have a value");
+    }
+    let users = data.userbox.read().unwrap();
+    if let Ok(login_result) = (*users).login(req.email.clone(), req.password.clone()) {
+        return HttpResponse::Accepted().body("Login success");
+    } else {
+        return HttpResponse::Forbidden().body("Incorrect Password");
+    }
+
 }
 
 struct UsersLock {
@@ -130,8 +164,45 @@ mod tests {
 
         let mut userstor = data.userbox.read().unwrap();
 
-        let result = (*userstor).login("torg@torg.net".to_string());
+        let result = (*userstor).login("torg@torg.net".to_string(), "apples".to_string());
         assert!(result.is_ok());
+    }
+
+    #[actix_web::test]
+    async fn test_login_request() {
+        let data = web::Data::new( UsersLock { userbox: RwLock::new(UserStorage::new()) });
+        let app = test::init_service(App::new()
+            .app_data(data.clone())
+            .service(login)
+            .service(signup))
+            .await;
+        let newUser = SignUpRequest::new("torg@torg.net", "apples");
+        let req = test::TestRequest::post()
+          .uri("/signup")
+          .set_json(newUser)
+          .to_request();
+        let resp = test::call_service(&app, req).await;
+        assert!(resp.status().is_success());
+
+        let login_user = LoginRequest::new("torg@torg.net", "apples");
+        let login_req = test::TestRequest::post()
+          .uri("/login")
+          .set_json(login_user)
+          .to_request();
+        let login_resp = test::call_service(&app, login_req).await;
+
+        assert!(login_resp.status().is_success());
+
+        let userReq = LoginRequest::new("torg@torg.net", "wrong_pass");
+        let login_req_bad = test::TestRequest::post()
+          .uri("/login")
+          .set_json(userReq)
+          .to_request();
+        let login_resp_bad = test::call_service(&app, login_req_bad).await;
+
+        assert!(login_resp_bad.status().is_client_error());
+
+
     }
 
     #[test]
@@ -166,10 +237,10 @@ mod tests {
 
         let result = storage.add_user(user1);
 
-        let login_result = storage.login("geek@geek.com".to_string());
+        let login_result = storage.login("geek@geek.com".to_string(), "pass".to_string());
         assert!(login_result.is_ok());
 
-        let login_result_fail = storage.login("boomer@cabin.com".to_string());
+        let login_result_fail = storage.login("boomer@cabin.com".to_string(), "weird pass".to_string());
         assert!(login_result_fail.is_err());
    }
 }
