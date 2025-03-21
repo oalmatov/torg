@@ -1,6 +1,7 @@
 use torgserver::*;
 use actix_files as fs;
-use actix_web::{App, HttpServer, Responder, HttpRequest, HttpResponse,  web, post};
+use actix_web::{App, HttpServer, Responder, HttpRequest, HttpResponse, web, post, http::header};
+use actix_cors::Cors;
 
 mod models;
 
@@ -8,6 +9,7 @@ use models::*;
 
 #[post("/signup")]
 pub async fn signup(req: web::Json<SignUpRequest>, data: web::Data<UsersLock>) -> impl Responder {
+    println!("Received signup: {:?}", req);
     if !req.is_valid() {
         return HttpResponse::BadRequest().body("All fields must have a value");
     }
@@ -40,11 +42,18 @@ pub async fn login(req: web::Json<LoginRequest>, data: web::Data::<UsersLock>) -
         let data = web::Data::new( UsersLock::new() );
         HttpServer::new(move || {
             App::new()
-                .service(fs::Files::new("/", "../dist").index_file("index.html"))
-                .default_service(web::to(fallback))
+                .wrap(
+                    Cors::default()
+                        .allowed_origin("http://localhost:5173")
+                        .allowed_methods(vec!["GET", "POST"])
+                        .allowed_headers(vec![header::CONTENT_TYPE])
+                        .max_age(3600),
+                )
                 .app_data(data.clone())
                 .service(signup)
                 .service(login)
+                .service(fs::Files::new("/", "../dist").index_file("index.html"))
+                .default_service(web::to(fallback))
         }) 
         .bind(("127.0.0.1", 8080))?
         .run()

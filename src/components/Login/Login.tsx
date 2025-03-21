@@ -27,7 +27,7 @@ function LoginPage(): ReactElement {
                 throw new Error(`Error ${response.status} ${response.statusText}`);
             }
 
-            const data = await response.json();
+            const data = await response.data();
             console.log("Success:", data)
         } catch(error) {
             console.log("Error:", error);
@@ -76,14 +76,14 @@ function LoginPage(): ReactElement {
                     <form id="login-form" className="auth-form" onSubmit={handleLoginSubmit}>
                         <h1>Login</h1>
                         <label>Email</label>
-                        <input type="email" placeholder="torgin.terry@example.com" required />
+                        <input type="email" name="email" placeholder="torgin.terry@example.com" required />
                         <div className="pw-label">
                             <label>Password</label>
                             <a className="toggle-forgot" onClick={() => handleToggleForm('forgot')}>
                                 Forgot your password?
                             </a>
                         </div>
-                        <input type="password" required />
+                        <input type="password" name="password" required />
                         <button type="submit">Log in</button>
                         <div className="sign-up-link">
                             <p>
@@ -100,9 +100,9 @@ function LoginPage(): ReactElement {
                     <form id="signup-form" className="auth-form" onSubmit={handleSignupSubmit}>
                         <h1>Sign up</h1>
                         <label>Email</label>
-                        <input type="email" placeholder="torgin.terry@example.com" required />
+                        <input name="email" type="email" placeholder="torgin.terry@example.com" required />
                         <label>Password</label>
-                        <input type="password" required />
+                        <input name="password" type="password" required />
                         <label>Confirm password</label>
                         <input type="password" required />
                         <button type="submit">Sign up</button>

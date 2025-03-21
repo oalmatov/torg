@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::sync::RwLock;
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SignUpRequest {
     email: String,
     password: String,
