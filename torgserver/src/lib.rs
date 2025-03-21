@@ -1,91 +1,8 @@
 use actix_files as fs;
 use actix_web::{HttpRequest, HttpResponse, Responder, post, web};
-use serde::{Serialize, Deserialize};
-use serde_json;
-use std::collections::HashMap;
-use std::sync::RwLock;
 
-#[derive(Serialize, Deserialize)]
-struct SignUpRequest {
-    email: String,
-    password: String,
-}
-
-impl SignUpRequest {
-    pub fn new(email: &str, password: &str) -> Self {
-        SignUpRequest {
-            email: String::from(email),
-            password: String::from(password),
-        }
-    }
-
-    pub fn conv_user(self) -> User {
-        User {
-            email: self.email,
-            password: self.password,
-        }
-    }
-} 
-
-#[derive(Serialize, Deserialize)]
-struct LoginRequest {
-    email: String,
-    password: String,
-}
-
-impl LoginRequest {
-    pub fn new(email: &str, password: &str) -> Self {
-        LoginRequest {
-            email: email.to_string(),
-            password: password.to_string(),
-        }
-    }
-}
-
-#[derive(Debug)]
-struct User {
-    email: String,
-    password: String,
-}
-
-struct UserStorage {
-    users: HashMap<String, Box<User>>,
-}
-
-impl UserStorage {
-    pub fn new() -> UserStorage {
-        let map: HashMap<String, Box<User>> = HashMap::new();
-        UserStorage {
-            users: map,
-        }
-    }
-
-    pub fn add_user(&mut self, user: User) -> Result<(), &'static str> {
-        let map = &mut self.users; 
-        match map.insert(user.email.to_string(), Box::new(user)) {
-            None => Ok(()),
-            Some(_) => Err("User already exists"),
-        }
-    }
-
-    pub fn login(&self, email: String, password: String) -> Result<User, &'static str> {
-        let map = &self.users;
-        if let Some(user) = map.get(&email) {
-            let retuser = User {
-                email: user.email.clone(),
-                password: user.password.clone(),
-            };
-            if retuser.password == password {
-              Ok(retuser)
-            } else {
-                Err("The password is incorrect")
-            }
-        } else {
-            Err("No account under that email exists")
-        }
-    }
-
-}
+mod models;
+use models::*;
 
 pub async fn fallback(_req: HttpRequest) -> impl Responder {
     fs::NamedFile::open_async("../dist/index.html").await.unwrap()
@@ -93,34 +10,31 @@ pub async fn fallback(_req: HttpRequest) -> impl Responder {
 
 #[post("/signup")]
 pub async fn signup(req: web::Json<SignUpRequest>, data: web::Data<UsersLock>) -> impl Responder {
-    if req.email.is_empty() || req.password.is_empty() {
+    if !req.is_valid() {
         return HttpResponse::BadRequest().body("All fields must have a value");
     }
     let mut users = data.userbox.write().unwrap();
-    (*users).add_user(User {email: req.email.clone(), password: req.password.clone()});
+    let email = req.get_email();
+    (*users).add_user(req.req_to_user());
     HttpResponse::Created().json(serde_json::json!({
         "message" : "User registered successfully!",
-        "email" :  req.email
+        "email" :  email,
     }))
 }
 
 //need to validate login and give session token back to client
 #[post("/login")]
 pub async fn login(req: web::Json<LoginRequest>, data: web::Data::<UsersLock>) -> impl Responder {
-    if req.email.is_empty() || req.password.is_empty() {
+    if !req.is_valid() {
         return HttpResponse::BadRequest().body("All fields must have a value");
     }
     let users = data.userbox.read().unwrap();
-    if let Ok(login_result) = (*users).login(req.email.clone(), req.password.clone()) {
+    if let Ok(login_result) = (*users).login(req.req_to_user()) {
         return HttpResponse::Accepted().body("Login success");
     } else {
         return HttpResponse::Forbidden().body("Incorrect Password");
     }
 
-}
-
-struct UsersLock {
-    userbox: RwLock<UserStorage>,
 }
 
 
@@ -132,7 +46,7 @@ mod tests {
 
     #[actix_web::test]
     async fn test_index_post() {
-        let data = web::Data::new( UsersLock { userbox: RwLock::new(UserStorage::new()) });
+        let data = web::Data::new( UsersLock::new() );
         let app = test::init_service(App::new()
             .app_data(data.clone())
             .service(signup))
@@ -148,12 +62,13 @@ mod tests {
 
     #[actix_web::test]
     async fn test_signup_userhash() {
-        let data = web::Data::new( UsersLock { userbox: RwLock::new(UserStorage::new()) });
+        let data = web::Data::new( UsersLock::new() );
         let app = test::init_service(App::new()
             .app_data(data.clone())
             .service(signup))
             .await;
         let newUser = SignUpRequest::new("torg@torg.net", "apples");
+        let newUser1 = newUser.req_to_user();
         let req = test::TestRequest::post()
           .uri("/signup")
           .set_json(newUser)
@@ -164,13 +79,13 @@ mod tests {
 
         let mut userstor = data.userbox.read().unwrap();
 
-        let result = (*userstor).login("torg@torg.net".to_string(), "apples".to_string());
+        let result = (*userstor).login(newUser1);
         assert!(result.is_ok());
     }
 
     #[actix_web::test]
     async fn test_login_request() {
-        let data = web::Data::new( UsersLock { userbox: RwLock::new(UserStorage::new()) });
+        let data = web::Data::new( UsersLock::new() );
         let app = test::init_service(App::new()
             .app_data(data.clone())
             .service(login)
@@ -209,18 +124,11 @@ mod tests {
     async fn test_create_user_twice() {
         let mut storage = UserStorage::new();
 
-        let user1 = User {
-            email: "geek@geek.com".to_string(),
-            password: "pass".to_string(),
-        };
-
+        let user1 = User::new("geek@geek.com".to_string(), "pass".to_string());
         let mut result = storage.add_user(user1);
         assert!(result.is_ok()); 
 
-        let user2 = User {
-            email: "geek@geek.com".to_string(),
-            password: "pass".to_string(),
-        };
+        let user2 = User::new("geek@geek.com".to_string(), "wrongpass".to_string());
 
         result = storage.add_user(user2);
         assert!(result.is_err());
@@ -230,17 +138,17 @@ mod tests {
     async fn test_login() {
         let mut storage = UserStorage::new();
 
-        let user1 = User {
-            email: "geek@geek.com".to_string(),
-            password: "pass".to_string(),
-        };
-
+        let user1 = User::new("geek@geek.com".to_string(), "pass".to_string()); 
         let result = storage.add_user(user1);
 
-        let login_result = storage.login("geek@geek.com".to_string(), "pass".to_string());
+        let user2 = User::new("geek@geek.com".to_string(), "pass".to_string()); 
+
+        let login_result = storage.login(user2);
         assert!(login_result.is_ok());
 
-        let login_result_fail = storage.login("boomer@cabin.com".to_string(), "weird pass".to_string());
+        let user3 = User::new("geek@geek.com".to_string(), "wrongpass".to_string()); 
+
+        let login_result_fail = storage.login(user3);
         assert!(login_result_fail.is_err());
    }
 }
